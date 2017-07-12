@@ -1,18 +1,43 @@
-var express = require("express");
-var mysql = require("mysql");
+//Dependencies
+//========================================
+const express = require('express');
+const method_override = require('method-override');
+const bodyParser = require('body-parser');
+const exphbs = require('express-handlebars');
+var routes = require("./controllers/burgers_controller.js");
+
+
+
+//Set up Express
+//========================================
 var app = express();
-var bodyParser = require("body-parser")
-var exphbs = require("express-handlebars");
+var PORT = process.env.PORT || 3000;
 
 
-var port = 8080;
+// Sets up the Express app to handle data parsing
+//========================================
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text());
+app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
-app.use(express.static(__dirname + "/public"));
-
-// Parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-
-var exphbs = require("express-handlebars");
-
+//Sets up Handlebars
+//========================================
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
+
+//Handles Method Override
+//========================================
+app.use(method_override('_method'));
+
+
+//Routes
+//========================================
+app.use('/', routes);
+
+
+
+//Connect to port
+app.listen(PORT, function() {
+  console.log("App listening on PORT " + PORT);
+});
